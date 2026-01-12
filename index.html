@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>CPS Simulation – Von Wind zu Rad</title>
+  <title>CPS Simulation – Energiefluss & E-Mobilität</title>
   <link rel="stylesheet" href="style.css" />
   <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/gsap.min.js"></script>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/MotionPathPlugin.min.js"></script>
@@ -16,14 +16,10 @@
 
   <div id="scene">
     <div class="object" id="windturbine">Windturbine</div>
-    <div class="arrow" id="arrow-wind-grid"></div>
-
     <div class="object" id="grid">Grid Controller</div>
-    <div class="arrow" id="arrow-grid-consumer"></div>
-    <div class="arrow" id="arrow-grid-controller"></div>
-
     <div class="object" id="consumer">Verbraucher</div>
     <div class="object" id="controller">Central Controller</div>
+    <canvas id="energyFlow"></canvas>
 
     <div id="ev-container"></div>
     <div id="cluster-container"></div>
