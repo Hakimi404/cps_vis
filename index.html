@@ -1,74 +1,117 @@
 <!DOCTYPE html>
 <html lang="de">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>CPS Energiefluss – Vollständige Simulation</title>
-  <link rel="stylesheet" href="style.css" />
+  <meta charset="UTF-8">
+  <title>CPS Hauptprojekt – End-to-End Energie- und E-Mobilitäts-Simulation</title>
+  <link rel="stylesheet" href="style.css">
   <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/gsap.min.js"></script>
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/MotionPathPlugin.min.js"></script>
 </head>
 <body>
   <header>
-    <h1>CPS Energie- & E-Mobilitätsnetzwerk</h1>
-    <p>Kontinuierliche Simulation des gesamten Prozesses – vom Wind bis zum geladenen Fahrzeug</p>
+    <h1>CPS Hauptprojekt – End-to-End Energie- und E-Mobilitäts-Simulation</h1>
+    <p>Visualisierung der Systemarchitektur nach PlantUML-Struktur (mit zeitlicher Ablaufanimation)</p>
   </header>
 
   <main>
-    <svg id="diagram" viewBox="0 0 1400 800">
-      <!-- ARROW MARKER -->
+    <svg id="diagram" viewBox="0 0 1400 900">
+
+      <!-- Definitions -->
       <defs>
         <marker id="arrow" markerWidth="10" markerHeight="7" refX="8" refY="3.5" orient="auto">
-          <polygon points="0 0, 10 3.5, 0 7" fill="#00ffff" />
+          <polygon points="0 0, 10 3.5, 0 7" fill="black" />
         </marker>
       </defs>
 
-      <!-- === NODES === -->
-      <!-- ENERGY LAYER -->
-      <rect id="wind" class="node" x="100" y="300" width="140" height="60" rx="10" ry="10"></rect>
-      <text x="170" y="335" class="label">🌬 Windturbine</text>
+      <!-- EBENE 1 -->
+      <rect id="tick" class="node" x="600" y="60" width="200" height="60" />
+      <text x="700" y="95" class="label">tick_gen</text>
+      <text x="700" y="110" class="sublabel">Veröffentlicht: tickgen/tick</text>
 
-      <rect id="grid" class="node" x="350" y="300" width="160" height="60" rx="10" ry="10"></rect>
-      <text x="430" y="335" class="label">⚙️ Netzsteuerung</text>
+      <!-- EBENE 2 -->
+      <rect id="wt" class="node" x="250" y="220" width="220" height="80" />
+      <text x="360" y="255" class="label">wind_turbine</text>
+      <text x="360" y="275" class="sublabel">Liest DWD-Daten • Cp-Lookup</text>
 
-      <rect id="cons" class="node" x="600" y="160" width="160" height="60" rx="10" ry="10"></rect>
-      <text x="680" y="195" class="label">🏠 Verbraucher</text>
+      <rect id="gc" class="node" x="600" y="220" width="230" height="80" />
+      <text x="715" y="255" class="label">grid_controller</text>
+      <text x="715" y="275" class="sublabel">Balanciert Leistung & Nachfrage</text>
 
-      <rect id="ctrl" class="node" x="600" y="500" width="160" height="60" rx="10" ry="10"></rect>
-      <text x="680" y="535" class="label">🧠 Zentraler Controller</text>
+      <rect id="cons" class="node" x="980" y="220" width="200" height="80" />
+      <text x="1080" y="255" class="label">consumers</text>
+      <text x="1080" y="275" class="sublabel">BDEW-Lastprofile</text>
 
-      <!-- EVs -->
-      <rect id="ev1" class="ev" x="850" y="470" width="80" height="40" rx="10" ry="10"></rect>
-      <rect id="ev2" class="ev" x="850" y="530" width="80" height="40" rx="10" ry="10"></rect>
-      <rect id="ev3" class="ev" x="850" y="590" width="80" height="40" rx="10" ry="10"></rect>
-      <text x="890" y="650" class="label small">🚗 Elektrofahrzeuge</text>
+      <!-- EBENE 3 -->
+      <rect id="cc" class="node" x="600" y="400" width="230" height="80" />
+      <text x="715" y="435" class="label">central_controller</text>
+      <text x="715" y="455" class="sublabel">Zentrale Zuweisungslogik</text>
 
-      <!-- CHARGING CLUSTERS -->
-      <rect id="cl1" class="cluster" x="1100" y="420" width="160" height="60" rx="10" ry="10"></rect>
-      <text x="1180" y="455" class="label">🔋 Ladecluster A</text>
+      <rect id="ev" class="node" x="250" y="400" width="230" height="80" />
+      <text x="365" y="435" class="label">n × ev_sim</text>
+      <text x="365" y="455" class="sublabel">Fährt, lädt, nutzt OPC UA</text>
 
-      <rect id="cl2" class="cluster" x="1100" y="510" width="160" height="60" rx="10" ry="10"></rect>
-      <text x="1180" y="545" class="label">🔋 Ladecluster B</text>
+      <rect id="cl" class="node" x="980" y="400" width="220" height="80" />
+      <text x="1090" y="435" class="label">m × charging_cluster</text>
+      <text x="1090" y="455" class="sublabel">OPC UA-Server mit Ladeplätzen</text>
 
-      <!-- COMMUNICATION LAYER -->
-      <text x="700" y="760" class="layer">💬 MQTT Kommunikation</text>
-      <text x="700" y="785" class="layer">🧩 OPC UA Verbindung</text>
+      <!-- EBENE 4 -->
+      <rect id="mqtt" class="node" x="600" y="580" width="230" height="70" />
+      <text x="715" y="610" class="label">MQTT-Broker</text>
+      <text x="715" y="625" class="sublabel">Zentrale Kommunikations-Backbone</text>
 
-      <!-- CONNECTIONS -->
-      <path id="wind_grid" class="flow" d="M240,330 L350,330" />
-      <path id="grid_cons" class="flow" d="M510,330 L600,190" />
-      <path id="grid_ctrl" class="flow" d="M510,330 L600,530" />
-      <path id="ctrl_ev1" class="flow" d="M760,520 L850,490" />
-      <path id="ctrl_ev2" class="flow" d="M760,520 L850,550" />
-      <path id="ctrl_ev3" class="flow" d="M760,520 L850,610" />
-      <path id="ev1_cl1" class="opc" d="M930,490 L1100,450" />
-      <path id="ev2_cl2" class="opc" d="M930,550 L1100,540" />
-      <path id="ev3_cl1" class="opc" d="M930,610 L1100,460" />
+      <rect id="opc" class="node" x="980" y="580" width="220" height="70" />
+      <text x="1090" y="610" class="label">OPC UA-Netzwerk</text>
+      <text x="1090" y="625" class="sublabel">Physikalische Lade-Schnittstelle</text>
+
+      <!-- Sensor Layer -->
+      <rect id="chaos" class="node" x="250" y="580" width="180" height="70" />
+      <text x="340" y="610" class="label">chaos_sensor</text>
+
+      <rect id="mean" class="node" x="250" y="680" width="180" height="70" />
+      <text x="340" y="710" class="label">mean_processor</text>
+
+      <!-- LINES (DATA FLOW) -->
+      <!-- Tick -->
+      <path id="tick_wt" class="arrow" d="M700,120 L360,220" marker-end="url(#arrow)" />
+      <path id="tick_gc" class="arrow" d="M700,120 L715,220" marker-end="url(#arrow)" />
+      <path id="tick_ev" class="arrow" d="M700,120 L365,400" marker-end="url(#arrow)" />
+      <text x="500" y="160" class="arrowlabel">tickgen/tick</text>
+
+      <!-- Energiefluss -->
+      <path id="wt_mqtt" class="arrow" d="M470,260 L600,580" marker-end="url(#arrow)" />
+      <text x="520" y="440" class="arrowlabel">windturbine/power</text>
+
+      <path id="cons_mqtt" class="arrow" d="M1080,300 L715,580" marker-end="url(#arrow)" />
+      <text x="900" y="440" class="arrowlabel">consumer/.../demand</text>
+
+      <path id="gc_mqtt" class="arrow" d="M715,300 L715,580" marker-end="url(#arrow)" />
+      <text x="720" y="500" class="arrowlabel">consumer/.../power_share</text>
+
+      <!-- EV-Verhandlung -->
+      <path id="ev_mqtt" class="arrow" d="M365,480 L715,580" marker-end="url(#arrow)" />
+      <text x="500" y="520" class="arrowlabel">ev_sim/request</text>
+
+      <path id="cc_mqtt" class="arrow" d="M715,480 L715,580" marker-end="url(#arrow)" />
+      <text x="740" y="520" class="arrowlabel">ev_sim/assignment</text>
+
+      <path id="cl_mqtt" class="arrow" d="M1090,480 L715,580" marker-end="url(#arrow)" />
+      <text x="920" y="520" class="arrowlabel">cluster/x/y/price</text>
+
+      <!-- OPC UA -->
+      <path id="ev_opc" class="arrow" d="M365,480 L1090,580" marker-end="url(#arrow)" />
+      <text x="720" y="560" class="arrowlabel">ConnectEV(), RequestCharge(), DisconnectEV()</text>
+
+      <!-- Sensor -->
+      <path id="chaos_mqtt" class="arrow" d="M340,650 L715,580" marker-end="url(#arrow)" />
+      <text x="500" y="630" class="arrowlabel">chaossensor/.../data</text>
+
+      <path id="mean_mqtt" class="arrow" d="M340,750 L715,580" marker-end="url(#arrow)" />
+      <text x="500" y="720" class="arrowlabel">chaossensor/mean</text>
+
     </svg>
   </main>
 
   <footer>
-    <p>© 2026 CPS Simulation – Vollständige Visualisierung des Energieflusses</p>
+    <p>© 2026 CPS Simulation – Generische Visualisierung</p>
   </footer>
 
   <script src="script.js"></script>
