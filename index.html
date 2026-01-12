@@ -3,9 +3,10 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>CPS Cinematic Simulation</title>
+  <title>CPS Cinematic Simulation – Von Wind zu Rad</title>
   <link rel="stylesheet" href="style.css" />
   <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/gsap.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/MotionPathPlugin.min.js"></script>
 </head>
 <body>
   <div id="console">
@@ -14,17 +15,17 @@
   </div>
 
   <div id="scene">
-    <div class="object windturbine" id="windturbine">Windturbine 🌬</div>
-    <div class="object grid" id="grid">Grid Controller ⚙️</div>
-    <div class="object consumer" id="consumer">Verbraucher 🏠</div>
-    <div class="object controller" id="controller">Central Controller 🧠</div>
-    
+    <div class="object" id="tickgen">Tick Generator ⏱</div>
+    <div class="windturbine" id="windturbine">
+      <div class="blade"></div><div class="blade"></div><div class="blade"></div>
+      <span>Windturbine 🌬</span>
+    </div>
+    <div class="object" id="grid">Grid Controller ⚙️</div>
+    <div class="object" id="consumer">Verbraucher 🏠</div>
+    <div class="object" id="controller">Central Controller 🧠</div>
+
     <div id="ev-container"></div>
-    
-    <div class="cluster" id="clusterA">Cluster A<br><span>Slots: 0/3</span></div>
-    <div class="cluster" id="clusterB">Cluster B<br><span>Slots: 0/3</span></div>
-    <div class="cluster" id="clusterC">Cluster C<br><span>Slots: 0/3</span></div>
-    <div class="cluster" id="clusterD">Cluster D<br><span>Slots: 0/3</span></div>
+    <div id="cluster-container"></div>
   </div>
 
   <script src="script.js"></script>
