@@ -1,81 +1,83 @@
 const logBox = document.getElementById("log");
-function log(msg){
+function logStory(msg){
   const t = new Date().toLocaleTimeString();
-  logBox.innerHTML += `[${t}] ${msg}<br>`;
+  logBox.innerHTML += `<b>[${t}]</b> ${msg}<br>`;
   logBox.scrollTop = logBox.scrollHeight;
 }
 
-// --- Windturbine rotation ---
+// Windturbine rotation
 gsap.to("#blades",{rotation:360,transformOrigin:"center",repeat:-1,ease:"linear",duration:4});
 
 // EV data
 const evs = [
-  {id:"EV_1",color:"#00aaff",soc:25},
-  {id:"EV_2",color:"#00ff66",soc:45},
-  {id:"EV_3",color:"#ff5555",soc:30},
+  {id:"EV_1",color:"#00aaff",soc:30},
+  {id:"EV_2",color:"#00ff66",soc:50},
+  {id:"EV_3",color:"#ff5555",soc:25},
 ];
 const clusters=["A","B","C","D"];
 
-async function blink(elem,color="#00d9ff",times=3){
-  for(let i=0;i<times;i++){
-    elem.style.stroke=color;elem.style.opacity=1;
-    await gsap.to(elem,{opacity:0.3,duration:0.4});
+function moveEV(ev,x,y,duration=2){return gsap.to(ev,{attr:{cx:x,cy:y},duration,ease:"power1.inOut"});}
+async function wait(t){return new Promise(r=>setTimeout(r,t));}
+
+async function systemCycle(){
+  // --- Stage 1: Windturbine erzeugt Energie ---
+  logStory("Der Wind bläst durch die Turbine – Energie wird erzeugt.");
+  await wait(1000);
+  logStory("Die Windturbine überträgt elektrische Leistung an den Grid Controller.");
+  await gsap.to("#windline",{opacity:1,duration:1});
+  await wait(500);
+  logStory("Der Grid Controller empfängt Energie und verteilt sie an das Netz und die Verbraucher.");
+  await wait(1000);
+  logStory("Die Verbraucher nutzen aktuell verfügbare Energie für Haushalte und Industrie.");
+  await wait(1500);
+  logStory("Ein Teil der Energie wird für Elektrofahrzeuge reserviert.");
+
+  // --- Stage 2: EVs bewegen sich ---
+  for(const evObj of evs){logStory(`${evObj.id} fährt im Grid. Aktueller SoC: ${evObj.soc}%`);}
+  await wait(1500);
+
+  // --- Stage 3: EV sendet Ladeanfrage ---
+  const needyEV = evs.find(e=>e.soc<35);
+  logStory(`${needyEV.id} erkennt niedrigen Ladezustand (${needyEV.soc}%) und sendet eine Ladeanfrage an den MQTT-Broker.`);
+  await wait(1000);
+  logStory("Der zentrale Controller empfängt die Anfrage und sendet ein Call-for-Proposals an alle Cluster.");
+  await wait(1000);
+
+  // --- Stage 4: Cluster-Angebote ---
+  const offers = clusters.map(c=>({c,price:(0.1+Math.random()*0.05).toFixed(3),slot:Math.random()>0.3}));
+  for(const o of offers){logStory(`Cluster ${o.c} bietet Preis: ${o.price} €/kWh ${o.slot?"(Slot verfügbar)":"(besetzt)"}`);}
+  const best = offers.filter(o=>o.slot).sort((a,b)=>a.price-b.price)[0];
+  logStory(`${needyEV.id} akzeptiert das Angebot von Cluster ${best.c}.`);
+  await wait(1500);
+
+  // --- Stage 5: EV fährt zum Cluster ---
+  const ev = document.getElementById(needyEV.id);
+  const clusterY = 350+(best.c.charCodeAt(0)-65)*100;
+  await moveEV(ev,1100,clusterY,3);
+  logStory(`${needyEV.id} erreicht ${best.c} und startet den Ladevorgang über OPC UA.`);
+  await wait(1000);
+
+  // --- Stage 6: Ladevorgang ---
+  for(let s=needyEV.soc;s<=100;s+=10){
+    needyEV.soc=s;
+    logStory(`${needyEV.id} lädt... aktueller SoC: ${s}%`);
+    await wait(700);
   }
-  elem.style.opacity=0.3;
+
+  // --- Stage 7: Rückkehr ins Grid ---
+  logStory(`${needyEV.id} ist vollständig geladen und verlässt den Cluster.`);
+  await moveEV(ev,300+Math.random()*200,780+Math.random()*60,2);
+  needyEV.soc=40+Math.random()*30;
+  await wait(1000);
+  logStory(`${needyEV.id} fährt wieder im Netz. Der Zyklus beginnt von vorn.`);
 }
 
-// Move EV smoothly
-function moveEV(ev,x,y,duration=2){
-  return gsap.to(ev,{attr:{cx:x,cy:y},duration,ease:"power1.inOut"});
-}
-
-// --- Main EV cycle ---
-async function runEV(evObj){
-  const ev = document.getElementById(evObj.id);
+// Zyklus wiederholen
+async function mainLoop(){
   while(true){
-    // step 1: low SoC
-    if(evObj.soc<40){
-      ev.setAttribute("fill","#ffaa00");
-      log(`${evObj.id}: SoC=${evObj.soc}% → sendet Ladeanfrage an MQTT-Broker`);
-      await blink(document.getElementById("mqtt"));
-      log(`${evObj.id}: Anfrage erreicht zentralen Controller`);
-      await blink(document.getElementById("cc"));
-      log(`${evObj.id}: Controller fragt Cluster an ...`);
-      await blink(document.getElementById("A"));
-      await blink(document.getElementById("B"));
-      await blink(document.getElementById("C"));
-      await blink(document.getElementById("D"));
-
-      const offers = clusters.map(c=>({c,price:10+Math.random()*8,dist:1+Math.random()*4}));
-      const best = offers.reduce((a,b)=>(a.price*a.dist<b.price*b.dist)?a:b);
-      log(`${evObj.id}: Beste Option → Cluster ${best.c}`);
-
-      // move to cluster
-      const targetY = 150 + (best.c.charCodeAt(0)-65)*120;
-      await moveEV(ev,1100,targetY);
-      log(`${evObj.id}: erreicht Cluster ${best.c}, beginnt zu laden`);
-
-      // charging
-      for(let i=evObj.soc;i<=100;i+=10){
-        evObj.soc=i;
-        ev.setAttribute("fill","#00ff99");
-        log(`${evObj.id}: lädt... SoC=${i}%`);
-        await new Promise(r=>setTimeout(r,600));
-      }
-
-      log(`${evObj.id}: voll geladen, kehrt zurück zum Grid`);
-      await moveEV(ev,300+Math.random()*200,700+Math.random()*80);
-      evObj.soc=30+Math.random()*20;
-      ev.setAttribute("fill",evObj.color);
-      await new Promise(r=>setTimeout(r,2000));
-    }else{
-      // driving & consumption
-      evObj.soc-=Math.random()*5;
-      log(`${evObj.id}: fährt im Grid (SoC=${evObj.soc.toFixed(1)}%)`);
-      await new Promise(r=>setTimeout(r,2000));
-    }
+    await systemCycle();
+    logStory("────────────────────────────────────────────");
+    await wait(3000);
   }
 }
-
-// Run all EVs concurrently
-evs.forEach(e=>runEV(e));
+mainLoop();
