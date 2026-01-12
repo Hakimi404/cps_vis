@@ -2,73 +2,31 @@
 <html lang="de">
 <head>
   <meta charset="UTF-8" />
-  <title>CPS-Simulation – Von Wind zu Rad</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>CPS Cinematic Simulation</title>
   <link rel="stylesheet" href="style.css" />
   <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/gsap.min.js"></script>
 </head>
 <body>
-  <div id="container">
-    <aside id="console">
-      <h2>📜 Systemablauf</h2>
-      <div id="log"></div>
-    </aside>
-
-    <main>
-      <svg id="diagram" viewBox="0 0 1600 950">
-        <defs>
-          <marker id="arrow" markerWidth="10" markerHeight="7" refX="8" refY="3.5" orient="auto">
-            <polygon points="0 0,10 3.5,0 7" fill="#00d9ff" />
-          </marker>
-        </defs>
-
-        <!-- Windturbine -->
-        <g id="turbine" transform="translate(200,180)">
-          <circle cx="0" cy="0" r="50" fill="#0f2028" stroke="#00d9ff" stroke-width="2"/>
-          <g id="blades">
-            <rect x="-5" y="-70" width="10" height="70" fill="#00d9ff"/>
-            <rect x="-5" y="0" width="10" height="70" fill="#00d9ff" transform="rotate(120)"/>
-            <rect x="-5" y="0" width="10" height="70" fill="#00d9ff" transform="rotate(240)"/>
-          </g>
-          <text x="-50" y="90" class="label">Windturbine</text>
-        </g>
-
-        <!-- Energiepfad zur Grid -->
-        <path id="windline" class="arrow" d="M250,180 L600,250" marker-end="url(#arrow)" />
-
-        <!-- Grid Controller -->
-        <rect id="grid" class="node" x="600" y="220" width="220" height="80"/>
-        <text x="710" y="255" class="label">Grid Controller</text>
-
-        <!-- Consumers -->
-        <rect id="cons" class="node" x="1000" y="180" width="220" height="80"/>
-        <text x="1110" y="215" class="label">Verbraucher</text>
-
-        <!-- Central Controller -->
-        <rect id="cc" class="node" x="700" y="400" width="260" height="80"/>
-        <text x="830" y="435" class="label">Zentraler Controller</text>
-
-        <!-- Clusters -->
-        <g id="clusters">
-          <rect id="A" class="cluster" x="1100" y="320" width="160" height="60"/>
-          <text x="1180" y="355" class="label">Cluster A</text>
-          <rect id="B" class="cluster" x="1100" y="420" width="160" height="60"/>
-          <text x="1180" y="455" class="label">Cluster B</text>
-          <rect id="C" class="cluster" x="1100" y="520" width="160" height="60"/>
-          <text x="1180" y="555" class="label">Cluster C</text>
-          <rect id="D" class="cluster" x="1100" y="620" width="160" height="60"/>
-          <text x="1180" y="655" class="label">Cluster D</text>
-        </g>
-
-        <!-- EVs -->
-        <g id="evs">
-          <circle id="EV_1" class="ev" cx="300" cy="780" r="25" fill="#00aaff"/><text x="300" y="825" class="evlabel">EV_1</text>
-          <circle id="EV_2" class="ev" cx="200" cy="860" r="25" fill="#00ff66"/><text x="200" y="905" class="evlabel">EV_2</text>
-          <circle id="EV_3" class="ev" cx="400" cy="860" r="25" fill="#ff5555"/><text x="400" y="905" class="evlabel">EV_3</text>
-        </g>
-      </svg>
-    </main>
+  <div id="console">
+    <h2>Live-Systemprotokoll</h2>
+    <div id="log"></div>
   </div>
-  <footer>© 2026 CPS Hauptprojekt – Von Wind zu Rad</footer>
+
+  <div id="scene">
+    <div class="object windturbine" id="windturbine">Windturbine 🌬</div>
+    <div class="object grid" id="grid">Grid Controller ⚙️</div>
+    <div class="object consumer" id="consumer">Verbraucher 🏠</div>
+    <div class="object controller" id="controller">Central Controller 🧠</div>
+    
+    <div id="ev-container"></div>
+    
+    <div class="cluster" id="clusterA">Cluster A<br><span>Slots: 0/3</span></div>
+    <div class="cluster" id="clusterB">Cluster B<br><span>Slots: 0/3</span></div>
+    <div class="cluster" id="clusterC">Cluster C<br><span>Slots: 0/3</span></div>
+    <div class="cluster" id="clusterD">Cluster D<br><span>Slots: 0/3</span></div>
+  </div>
+
   <script src="script.js"></script>
 </body>
 </html>
