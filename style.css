@@ -1,36 +1,76 @@
 body {
-  background-color: #0f1115;
-  color: #fff;
-  font-family: "Segoe UI", Arial, sans-serif;
   margin: 0;
+  background: #0b0d10;
+  color: #fff;
+  font-family: "Segoe UI", sans-serif;
+  display: flex;
+  flex-direction: column;
+  height: 100vh;
+}
+
+#container {
+  display: flex;
+  flex: 1;
+}
+
+aside#infoBox {
+  width: 280px;
+  background: #14171c;
+  padding: 20px;
+  border-right: 2px solid #00d9ff;
+}
+
+#infoBox h2 {
+  color: #00d9ff;
+  font-size: 18px;
+  margin-bottom: 10px;
+}
+
+#infoText {
+  font-size: 14px;
+  line-height: 1.6;
+  color: #ddd;
+  height: 300px;
+  overflow-y: auto;
+}
+
+#socBox {
+  margin-top: 30px;
+}
+
+#socLabel {
+  font-size: 15px;
+  margin-bottom: 5px;
+}
+
+#socBar {
+  width: 100%;
+  height: 20px;
+  background: #333;
+  border-radius: 10px;
   overflow: hidden;
 }
 
-header {
-  text-align: center;
-  padding: 20px;
-  border-bottom: 1px solid #333;
+#socFill {
+  height: 100%;
+  width: 20%;
+  background: linear-gradient(90deg, #ff5555, #ffaa00);
+  transition: width 1s linear;
 }
 
-h1 {
-  font-size: 22px;
-  color: #00d9ff;
-}
-
-p {
-  font-size: 14px;
-  color: #bbb;
+main {
+  flex: 1;
 }
 
 svg {
-  width: 100vw;
-  height: 80vh;
+  width: 100%;
+  height: 100%;
 }
 
 .node {
   fill: #1a1d22;
   stroke: #00d9ff;
-  stroke-width: 1.5;
+  stroke-width: 1.6;
   rx: 8;
 }
 
@@ -41,37 +81,19 @@ svg {
 
 .label {
   font-weight: bold;
-  font-size: 14px;
-}
-
-.sublabel {
-  font-size: 12px;
-  fill: #bbb;
+  font-size: 13px;
 }
 
 .arrow {
   stroke: #00d9ff;
-  stroke-width: 1.4;
-  fill: none;
+  stroke-width: 1.3;
   opacity: 0.2;
-}
-
-.arrowlabel {
-  fill: #aaa;
-  font-size: 11px;
-  text-anchor: middle;
-}
-
-.evlabel {
-  fill: #fff;
-  font-size: 12px;
-  text-anchor: middle;
+  fill: none;
 }
 
 footer {
   text-align: center;
+  color: #888;
+  padding: 8px;
   font-size: 12px;
-  color: #777;
-  padding: 10px;
-  border-top: 1px solid #333;
 }

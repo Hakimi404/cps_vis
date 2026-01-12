@@ -2,97 +2,71 @@
 <html lang="de">
 <head>
   <meta charset="UTF-8">
-  <title>CPS Energie- & E-Mobilitätssystem – Simulation</title>
+  <title>CPS E-Mobilitäts-Simulation – Vom Windrad zum Fahrzeug</title>
   <link rel="stylesheet" href="style.css">
   <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/gsap.min.js"></script>
 </head>
-
 <body>
-  <header>
-    <h1>CPS Hauptprojekt – End-to-End Energie- & E-Mobilitäts-Simulation</h1>
-    <p>Vom Windrad bis zum geladenen Elektrofahrzeug</p>
-  </header>
+  <div id="container">
+    <aside id="infoBox">
+      <h2>🧠 Systemstatus</h2>
+      <p id="infoText">Simulation startet...</p>
+      <div id="socBox">
+        <div id="socLabel">SoC: 20%</div>
+        <div id="socBar"><div id="socFill"></div></div>
+      </div>
+    </aside>
 
-  <main>
-    <svg id="diagram" viewBox="0 0 1400 800">
+    <main>
+      <svg id="diagram" viewBox="0 0 1400 800">
 
-      <defs>
-        <marker id="arrow" markerWidth="10" markerHeight="7" refX="8" refY="3.5" orient="auto">
-          <polygon points="0 0, 10 3.5, 0 7" fill="#00d9ff" />
-        </marker>
-      </defs>
+        <defs>
+          <marker id="arrow" markerWidth="10" markerHeight="7" refX="8" refY="3.5" orient="auto">
+            <polygon points="0 0, 10 3.5, 0 7" fill="#00d9ff" />
+          </marker>
+        </defs>
 
-      <!-- EBENE 1 -->
-      <rect id="tick" class="node" x="650" y="40" width="180" height="60" />
-      <text x="740" y="75" class="label">tick_gen</text>
-      <text x="740" y="90" class="sublabel">Veröffentlicht: tickgen/tick</text>
+        <!-- EV -->
+        <circle id="ev" cx="250" cy="600" r="25" fill="#ccc" stroke="#00d9ff" stroke-width="2"></circle>
+        <text x="250" y="605" class="evLabel">EV</text>
 
-      <!-- EBENE 2 -->
-      <rect id="wt" class="node" x="200" y="180" width="220" height="80" />
-      <text x="310" y="215" class="label">wind_turbine</text>
-      <text x="310" y="235" class="sublabel">Liest DWD-Daten · Cp-Lookup</text>
+        <!-- MQTT Broker -->
+        <rect id="mqtt" class="node" x="500" y="350" width="180" height="70"/>
+        <text x="590" y="385" class="label">MQTT-Broker</text>
+        <text x="590" y="400" class="sublabel">Kommunikation</text>
 
-      <rect id="gc" class="node" x="650" y="180" width="230" height="80" />
-      <text x="765" y="215" class="label">grid_controller</text>
-      <text x="765" y="235" class="sublabel">Balanciert Angebot & Nachfrage</text>
+        <!-- Central Controller -->
+        <rect id="cc" class="node" x="800" y="350" width="220" height="70"/>
+        <text x="910" y="385" class="label">Zentraler Controller</text>
 
-      <rect id="cons" class="node" x="1050" y="180" width="200" height="80" />
-      <text x="1150" y="215" class="label">consumers</text>
-      <text x="1150" y="235" class="sublabel">BDEW-Lastprofile</text>
+        <!-- Charging Clusters -->
+        <rect id="c1" class="node" x="1150" y="150" width="180" height="60"/>
+        <text x="1240" y="185" class="label">Cluster A</text>
 
-      <!-- EBENE 3 -->
-      <rect id="cc" class="node" x="650" y="370" width="230" height="80" />
-      <text x="765" y="405" class="label">central_controller</text>
-      <text x="765" y="425" class="sublabel">Zentrale Zuweisungslogik</text>
+        <rect id="c2" class="node" x="1150" y="270" width="180" height="60"/>
+        <text x="1240" y="305" class="label">Cluster B</text>
 
-      <rect id="cl" class="node" x="1050" y="370" width="220" height="80" />
-      <text x="1160" y="405" class="label">m × charging_cluster</text>
-      <text x="1160" y="425" class="sublabel">OPC UA-Server mit Ladeplätzen</text>
+        <rect id="c3" class="node" x="1150" y="390" width="180" height="60"/>
+        <text x="1240" y="425" class="label">Cluster C</text>
 
-      <!-- EBENE 4 -->
-      <rect id="mqtt" class="node" x="650" y="550" width="230" height="70" />
-      <text x="765" y="580" class="label">MQTT-Broker</text>
-      <text x="765" y="595" class="sublabel">Zentrale Kommunikations-Backbone</text>
+        <rect id="c4" class="node" x="1150" y="510" width="180" height="60"/>
+        <text x="1240" y="545" class="label">Cluster D</text>
 
-      <rect id="opc" class="node" x="1050" y="550" width="220" height="70" />
-      <text x="1160" y="580" class="label">OPC UA-Netzwerk</text>
-      <text x="1160" y="595" class="sublabel">Physikalische Lade-Schnittstelle</text>
+        <!-- Arrows -->
+        <path id="ev_mqtt" class="arrow" d="M250,600 L500,385" marker-end="url(#arrow)"/>
+        <path id="mqtt_cc" class="arrow" d="M680,385 L800,385" marker-end="url(#arrow)"/>
+        <path id="cc_clusters" class="arrow" d="M1020,385 L1150,180" marker-end="url(#arrow)"/>
+        <path id="cc_clusters2" class="arrow" d="M1020,385 L1150,300" marker-end="url(#arrow)"/>
+        <path id="cc_clusters3" class="arrow" d="M1020,385 L1150,420" marker-end="url(#arrow)"/>
+        <path id="cc_clusters4" class="arrow" d="M1020,385 L1150,540" marker-end="url(#arrow)"/>
+        <path id="clusters_cc" class="arrow" d="M1150,540 L800,385" marker-end="url(#arrow)"/>
+        <path id="cc_ev" class="arrow" d="M800,385 L250,600" marker-end="url(#arrow)"/>
 
-      <!-- SENSOREN -->
-      <rect id="chaos" class="node" x="200" y="550" width="180" height="70" />
-      <text x="290" y="580" class="label">chaos_sensor</text>
+      </svg>
+    </main>
+  </div>
 
-      <rect id="mean" class="node" x="200" y="650" width="180" height="70" />
-      <text x="290" y="680" class="label">mean_processor</text>
-
-      <!-- EV Fahrzeug -->
-      <circle id="ev" cx="330" cy="390" r="25" fill="#ccc" stroke="#00d9ff" stroke-width="2"></circle>
-      <text x="330" y="395" class="evlabel">EV</text>
-
-      <!-- ARROWS -->
-      <path id="tick_wt" class="arrow" d="M740,100 L310,180" marker-end="url(#arrow)" />
-      <path id="wt_mqtt" class="arrow" d="M420,220 L765,550" marker-end="url(#arrow)" />
-      <path id="cons_mqtt" class="arrow" d="M1150,260 L765,550" marker-end="url(#arrow)" />
-      <path id="gc_mqtt" class="arrow" d="M765,260 L765,550" marker-end="url(#arrow)" />
-      <path id="cc_mqtt" class="arrow" d="M765,450 L765,550" marker-end="url(#arrow)" />
-      <path id="cl_mqtt" class="arrow" d="M1160,450 L765,550" marker-end="url(#arrow)" />
-      <path id="ev_mqtt" class="arrow" d="M330,390 L765,550" marker-end="url(#arrow)" />
-      <path id="ev_opc" class="arrow" d="M330,390 L1160,550" marker-end="url(#arrow)" />
-      <path id="chaos_mqtt" class="arrow" d="M290,620 L765,550" marker-end="url(#arrow)" />
-      <path id="mean_mqtt" class="arrow" d="M290,720 L765,550" marker-end="url(#arrow)" />
-
-      <!-- Labels -->
-      <text x="500" y="140" class="arrowlabel">tickgen/tick</text>
-      <text x="500" y="380" class="arrowlabel">ev_sim/request</text>
-      <text x="960" y="520" class="arrowlabel">ConnectEV(), RequestCharge()</text>
-
-    </svg>
-  </main>
-
-  <footer>
-    <p>© 2026 CPS Simulation – Visualisierung des Energieflusses</p>
-  </footer>
-
+  <footer>© 2026 CPS Simulation – Visualisierung des Energieflusses</footer>
   <script src="script.js"></script>
 </body>
 </html>
