@@ -1,76 +1,70 @@
 gsap.registerPlugin(MotionPathPlugin);
 
-const infoBox = document.getElementById("info-text");
-
-// Tooltips for modules
-const info = {
-  wind: "Die Windturbine wandelt kinetische Energie des Windes in elektrische Energie um.",
-  grid: "Der Netzcontroller verteilt die erzeugte Energie zwischen Verbrauchern und Ladesystemen.",
-  cons: "Die Verbraucher nutzen den erzeugten Strom für Haushalte und Industrie.",
-  ctrl: "Der zentrale Controller verwaltet Fahrzeuganfragen und weist Ladecluster zu.",
-  cl1: "Ladecluster A: Steht für verfügbare Ladestationen.",
-  cl2: "Ladecluster B: Zweites Ladezentrum, empfängt Anfragen über OPC UA.",
-  ev1: "Ein Elektrofahrzeug. Kommuniziert mit dem Controller und fährt zum Cluster.",
-  ev2: "Ein weiteres Fahrzeug mit eigener Route.",
-  ev3: "Drittes Fahrzeug, simuliert paralleles Laden.",
-};
-
-document.querySelectorAll(".node, .cluster, .ev").forEach((el) => {
-  el.addEventListener("mouseenter", () => {
-    infoBox.innerText = info[el.id] || "Systemmodul.";
-  });
-  el.addEventListener("mouseleave", () => {
-    infoBox.innerText = "Bewege den Mauszeiger über ein Modul, um seine Funktion zu sehen.";
+// === ENERGY FLOW ANIMATION ===
+const flowPaths = ["#wind_grid", "#grid_cons", "#grid_ctrl"];
+flowPaths.forEach((id, i) => {
+  gsap.to(id, {
+    strokeDasharray: "10,10",
+    strokeDashoffset: 100,
+    repeat: -1,
+    duration: 2 + i,
+    ease: "linear",
   });
 });
 
-// Continuous animations
+// === MQTT MESSAGE FLOW (Controller <-> EVs) ===
+const mqttLines = ["#ctrl_ev1", "#ctrl_ev2", "#ctrl_ev3"];
+mqttLines.forEach((line, i) => {
+  gsap.to(line, {
+    strokeDasharray: "4,6",
+    strokeDashoffset: 40,
+    stroke: "#ff9800",
+    repeat: -1,
+    duration: 1.5 + 0.5 * i,
+    ease: "linear",
+  });
+});
+
+// === OPC UA CHARGING FLOW ===
+const opcLines = ["#ev1_cl1", "#ev2_cl2", "#ev3_cl1"];
+opcLines.forEach((line, i) => {
+  gsap.to(line, {
+    strokeDasharray: "6,8",
+    strokeDashoffset: 80,
+    repeat: -1,
+    duration: 1.8 + 0.4 * i,
+    ease: "linear",
+  });
+});
+
+// === EV MOVEMENT LOOP ===
 const evs = [
-  { id: "#ev1", target: { x: 970, y: 450 } },
-  { id: "#ev2", target: { x: 970, y: 540 } },
-  { id: "#ev3", target: { x: 970, y: 620 } },
+  { id: "#ev1", targetX: 1050, targetY: 440 },
+  { id: "#ev2", targetX: 1050, targetY: 530 },
+  { id: "#ev3", targetX: 1050, targetY: 600 },
 ];
 
-function animateEV(ev) {
-  const car = document.querySelector(ev.id);
-  const startX = parseFloat(car.getAttribute("cx"));
-  const startY = parseFloat(car.getAttribute("cy"));
-
-  gsap.to(car, {
+function loopEV(ev) {
+  const el = document.querySelector(ev.id);
+  const startX = parseFloat(el.getAttribute("x"));
+  const startY = parseFloat(el.getAttribute("y"));
+  gsap.to(el, {
     duration: 6,
-    motionPath: {
-      path: [
-        { x: startX, y: startY },
-        { x: ev.target.x, y: ev.target.y },
-      ],
-      autoRotate: false,
-    },
-    ease: "power1.inOut",
+    x: ev.targetX - startX,
+    y: ev.targetY - startY,
     yoyo: true,
     repeat: -1,
+    ease: "power1.inOut",
+    delay: Math.random() * 3,
   });
 }
+evs.forEach(loopEV);
 
-// Animate all EVs
-evs.forEach(animateEV);
-
-// Flowline pulse effect
-gsap.to(".flow", {
-  opacity: 1,
+// === Node Glow Pulse ===
+gsap.to([".node", ".cluster"], {
+  filter: "drop-shadow(0 0 10px #00ffff)",
   duration: 2,
-  ease: "power1.inOut",
   repeat: -1,
   yoyo: true,
-});
-
-// Node pulsing (energy flow)
-const nodes = [".node", ".cluster"];
-nodes.forEach((sel) => {
-  gsap.to(sel, {
-    stroke: "#00ffff",
-    duration: 1.8,
-    ease: "sine.inOut",
-    repeat: -1,
-    yoyo: true,
-  });
+  ease: "sine.inOut",
 });

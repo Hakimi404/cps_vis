@@ -3,70 +3,72 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>CPS Energie- & E-Mobilitätssystem</title>
+  <title>CPS Energiefluss – Vollständige Simulation</title>
   <link rel="stylesheet" href="style.css" />
   <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/gsap.min.js"></script>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/MotionPathPlugin.min.js"></script>
 </head>
 <body>
   <header>
-    <h1>🔋 CPS Energie- & E-Mobilitätssystem</h1>
-    <p class="subtitle">Vom Windrad bis zum geladenen Elektrofahrzeug</p>
+    <h1>CPS Energie- & E-Mobilitätsnetzwerk</h1>
+    <p>Kontinuierliche Simulation des gesamten Prozesses – vom Wind bis zum geladenen Fahrzeug</p>
   </header>
 
   <main>
-    <svg id="cps-diagram" viewBox="0 0 1200 700">
-      <!-- MARKER -->
+    <svg id="diagram" viewBox="0 0 1400 800">
+      <!-- ARROW MARKER -->
       <defs>
-        <marker id="arrowhead" markerWidth="10" markerHeight="7" refX="8" refY="3.5" orient="auto">
+        <marker id="arrow" markerWidth="10" markerHeight="7" refX="8" refY="3.5" orient="auto">
           <polygon points="0 0, 10 3.5, 0 7" fill="#00ffff" />
         </marker>
       </defs>
 
-      <!-- NODES -->
-      <rect id="wind" class="node" x="60" y="300" width="140" height="60" rx="10" ry="10"></rect>
-      <text x="130" y="335" class="label">🌬 Windturbine</text>
+      <!-- === NODES === -->
+      <!-- ENERGY LAYER -->
+      <rect id="wind" class="node" x="100" y="300" width="140" height="60" rx="10" ry="10"></rect>
+      <text x="170" y="335" class="label">🌬 Windturbine</text>
 
-      <rect id="grid" class="node" x="280" y="300" width="160" height="60" rx="10" ry="10"></rect>
-      <text x="360" y="335" class="label">⚙️ Netzsteuerung</text>
+      <rect id="grid" class="node" x="350" y="300" width="160" height="60" rx="10" ry="10"></rect>
+      <text x="430" y="335" class="label">⚙️ Netzsteuerung</text>
 
-      <rect id="cons" class="node" x="530" y="150" width="160" height="60" rx="10" ry="10"></rect>
-      <text x="610" y="185" class="label">🏠 Verbraucher</text>
+      <rect id="cons" class="node" x="600" y="160" width="160" height="60" rx="10" ry="10"></rect>
+      <text x="680" y="195" class="label">🏠 Verbraucher</text>
 
-      <rect id="ctrl" class="node" x="530" y="480" width="160" height="60" rx="10" ry="10"></rect>
-      <text x="610" y="515" class="label">🧠 Zentraler Controller</text>
+      <rect id="ctrl" class="node" x="600" y="500" width="160" height="60" rx="10" ry="10"></rect>
+      <text x="680" y="535" class="label">🧠 Zentraler Controller</text>
 
       <!-- EVs -->
-      <circle id="ev1" class="ev" cx="750" cy="490" r="15" fill="#00bcd4"></circle>
-      <circle id="ev2" class="ev" cx="750" cy="520" r="15" fill="#ff9800"></circle>
-      <circle id="ev3" class="ev" cx="750" cy="550" r="15" fill="#8bc34a"></circle>
-      <text x="780" y="540" class="label small">🚗 Elektrofahrzeuge</text>
+      <rect id="ev1" class="ev" x="850" y="470" width="80" height="40" rx="10" ry="10"></rect>
+      <rect id="ev2" class="ev" x="850" y="530" width="80" height="40" rx="10" ry="10"></rect>
+      <rect id="ev3" class="ev" x="850" y="590" width="80" height="40" rx="10" ry="10"></rect>
+      <text x="890" y="650" class="label small">🚗 Elektrofahrzeuge</text>
 
-      <!-- CLUSTERS -->
-      <rect id="cl1" class="cluster" x="970" y="420" width="160" height="60" rx="10" ry="10"></rect>
-      <text x="1050" y="455" class="label">🔋 Ladecluster A</text>
+      <!-- CHARGING CLUSTERS -->
+      <rect id="cl1" class="cluster" x="1100" y="420" width="160" height="60" rx="10" ry="10"></rect>
+      <text x="1180" y="455" class="label">🔋 Ladecluster A</text>
 
-      <rect id="cl2" class="cluster" x="970" y="510" width="160" height="60" rx="10" ry="10"></rect>
-      <text x="1050" y="545" class="label">🔋 Ladecluster B</text>
+      <rect id="cl2" class="cluster" x="1100" y="510" width="160" height="60" rx="10" ry="10"></rect>
+      <text x="1180" y="545" class="label">🔋 Ladecluster B</text>
 
       <!-- COMMUNICATION LAYER -->
-      <text x="600" y="650" class="layer">💬 MQTT Kommunikation</text>
-      <text x="600" y="680" class="layer">🧩 OPC UA Verbindung</text>
+      <text x="700" y="760" class="layer">💬 MQTT Kommunikation</text>
+      <text x="700" y="785" class="layer">🧩 OPC UA Verbindung</text>
 
-      <!-- ARROWS -->
-      <path id="flow1" class="flow" d="M200,330 L280,330" />
-      <path id="flow2" class="flow" d="M440,330 L530,180" />
-      <path id="flow3" class="flow" d="M440,330 L530,510" />
+      <!-- CONNECTIONS -->
+      <path id="wind_grid" class="flow" d="M240,330 L350,330" />
+      <path id="grid_cons" class="flow" d="M510,330 L600,190" />
+      <path id="grid_ctrl" class="flow" d="M510,330 L600,530" />
+      <path id="ctrl_ev1" class="flow" d="M760,520 L850,490" />
+      <path id="ctrl_ev2" class="flow" d="M760,520 L850,550" />
+      <path id="ctrl_ev3" class="flow" d="M760,520 L850,610" />
+      <path id="ev1_cl1" class="opc" d="M930,490 L1100,450" />
+      <path id="ev2_cl2" class="opc" d="M930,550 L1100,540" />
+      <path id="ev3_cl1" class="opc" d="M930,610 L1100,460" />
     </svg>
   </main>
 
-  <div id="info">
-    <h3>ℹ️ Systembeschreibung</h3>
-    <p id="info-text">Bewege den Mauszeiger über ein Modul, um seine Funktion zu sehen.</p>
-  </div>
-
   <footer>
-    <p>© 2026 CPS Simulation – Visualisierung des Energieflusses</p>
+    <p>© 2026 CPS Simulation – Vollständige Visualisierung des Energieflusses</p>
   </footer>
 
   <script src="script.js"></script>
