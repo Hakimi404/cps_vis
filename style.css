@@ -1,0 +1,97 @@
+body {
+  margin: 0;
+  background-color: #0b0d12;
+  color: #e6e6e6;
+  font-family: "Segoe UI", Arial, sans-serif;
+  overflow: hidden;
+}
+
+header {
+  text-align: center;
+  margin-top: 15px;
+}
+
+h1 {
+  font-size: 1.8rem;
+  color: #00e6ff;
+  font-weight: 600;
+}
+
+.subtitle {
+  color: #b0b0b0;
+  margin-top: -5px;
+  font-size: 0.9rem;
+}
+
+svg {
+  width: 100vw;
+  height: 75vh;
+}
+
+.node, .cluster {
+  fill: #1c1e26;
+  stroke: #00e6ff;
+  stroke-width: 1.5px;
+  transition: all 0.3s ease;
+}
+
+.node:hover, .cluster:hover {
+  stroke: #00ffff;
+  filter: drop-shadow(0 0 8px #00ffff);
+}
+
+.label {
+  fill: #e6e6e6;
+  font-size: 14px;
+  text-anchor: middle;
+  pointer-events: none;
+}
+
+.label.small {
+  font-size: 12px;
+}
+
+.flow {
+  stroke: #00ffff;
+  stroke-width: 3;
+  fill: none;
+  opacity: 0.5;
+  marker-end: url(#arrowhead);
+}
+
+.ev {
+  stroke: none;
+  cursor: pointer;
+  filter: drop-shadow(0 0 6px #00ffff);
+  transition: transform 0.5s;
+}
+
+.ev:hover {
+  transform: scale(1.2);
+}
+
+#info {
+  position: absolute;
+  top: 15px;
+  right: 20px;
+  background: rgba(20, 20, 30, 0.85);
+  border: 1px solid #00e6ff;
+  border-radius: 10px;
+  padding: 10px 20px;
+  width: 280px;
+  font-size: 13px;
+  color: #e6e6e6;
+}
+
+footer {
+  text-align: center;
+  color: #888;
+  font-size: 12px;
+  margin-top: 10px;
+}
+
+.layer {
+  font-size: 13px;
+  fill: #666;
+  text-anchor: middle;
+}
